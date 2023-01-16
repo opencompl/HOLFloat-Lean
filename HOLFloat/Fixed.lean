@@ -37,8 +37,6 @@ def fulp (fmt: fformat) : ℚ :=
 def finf (fmt: fformat) : ℚ :=
   fmt.r ^ fmt.e
 
-#check {x : ℚ // is_fixed (fformat.mk 1 2 3) x}
-
-abbrev fixed (fmt: fformat) : Type :=
-  {x: ℚ // (is_fixed fmt) x }
+abbrev fixed (fmt: fformat) : Set ℚ :=
+  fun (x: ℚ) => is_fixed fmt x
 
