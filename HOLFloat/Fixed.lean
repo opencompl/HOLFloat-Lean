@@ -1,21 +1,26 @@
 import Mathlib
 import HOLFloat.Common
+--set_option pp.all  true
+def is_valid_fformat (r p : Int) : Prop :=
+    1 < r 
+  ∧ (r % 2 = 0) 
+  ∧ 0 < p
 
-def is_valid_fformat (r p : Int) : Bool :=
-  1 < r ∧ r % 2 == 0 ∧ 0 < p
-
-structure fformat where
-  r : ℝ
+structure format where
+  r : ℤ
   p : ℤ
   e : ℤ
+deriving Repr
+def fformat :=
+  {fmt : format // is_valid_fformat fmt.r fmt.p }
+  
 
-
-#check fformat.mk 1 2 3
+#check (1: Int) ^ (1 : Int)
 
 def is_frac (fmt : fformat)(x: ℝ)(f: ℤ) : Prop :=
-  let e1 := fmt.r ^ (fmt.p - 1)
+  let e1 := fmt.val.r ^ (fmt.val.r - 1)
   let p1 := f ≤ e1
-  let p2 := |x| = f * fmt.r ^ (fmt.e - fmt.p + 1)
+  let p2 := |x| = f * fmt.val.r ^ (fmt.val.e - fmt.val.p + 1)
   p1 ∧ p2
 
 open Classical
@@ -26,20 +31,19 @@ noncomputable def ff (fmt: fformat)(x: ℝ) : ℤ :=
 def is_fixed (fmt: fformat)(x: ℝ) : Prop :=
   ∃ f, is_frac fmt x f
 def is_fin_fixed (fmt: fformat)(x: ℝ) : Prop :=
-  ∃ f, is_frac fmt x f ∧ f < fmt.r ^ (fmt.p - 1)
+  ∃ f, is_frac fmt x f ∧ f < fmt.val.r ^ (fmt.val.p - 1)
 
 -- fix point ulp
 
-noncomputable def fulp (fmt: fformat) : ℝ :=
-  fmt.r ^ (fmt.e - fmt.p + 1)
+def fulp (fmt: fformat) : ℝ :=
+  fmt.val.r ^ (fmt.val.e - fmt.val.p + 1)
 
-noncomputable def finf (fmt: fformat) : ℝ :=
-  fmt.r ^ fmt.e
+def finf (fmt: fformat) : ℝ :=
+  fmt.val.r ^ fmt.val.e
 
 abbrev fixed (fmt: fformat) : Set ℝ :=
   fun x: ℝ => is_fixed fmt x
 
-#check fixed (fformat.mk 1 2 3)
 def is_ub (fmt : fformat) (x y : ℝ) : Prop :=
   y ∈ fixed fmt ∧ x ≤ y
 
@@ -57,7 +61,7 @@ inductive roundmode where
 | to_zero : roundmode
 | to_pinf : roundmode
 | to_ninf : roundmode
-#check roundmode.to_near
+
 noncomputable def fround (fmt: fformat)(mode : roundmode)(x: ℝ): ℝ :=
   let lo := glb fmt x
   let hi := lub fmt x

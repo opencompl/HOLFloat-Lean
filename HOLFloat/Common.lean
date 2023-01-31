@@ -1,13 +1,27 @@
 import Mathlib
+set_option pp.all true
 
-def power (r : ℝ) (i : ℕ): ℝ :=
-  r ^ i
-noncomputable def ipow : (@& ℝ) → (@& ℤ) → ℝ
-  | x, Int.ofNat n => x ^ n
-  | x, Int.negSucc n =>  Inv.inv (x ^ n)
+def ipow (r : ℝ) (i : ℤ): ℝ :=
+  match i with
+  | Int.ofNat   n => r ^ n
+  | Int.negSucc n => r ^ (0 - n)
 
-noncomputable instance : HPow ℝ Int ℝ where
+instance : HPow ℝ ℤ ℝ where
   hPow := ipow
+
+def pow_int(r : ℤ) (i : ℤ): ℤ :=
+  match i with
+  | Int.ofNat   n => r ^ n
+  | Int.negSucc n => r ^ (0 - n)
+
+def real_mul (r : ℝ) (i : ℤ) : ℝ :=
+  match i with
+  | Int.ofNat   n => r * n
+  | Int.negSucc n => r * (0 - n)
+instance : HMul ℝ ℤ ℝ where
+  hMul := real_mul
+instance : HPow ℤ ℤ ℤ where
+  hPow := pow_int
 
 theorem ipow_lt_zero {r : ℝ}{i : ℤ} : 0 < r → 0 < r ^ i := by
   sorry
@@ -51,9 +65,11 @@ theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r → u ≤ v → 
   sorry
 theorem ipow_mul_inv_eq_one {r : ℝ}{i : ℤ} : 0 < r → r ^ i * r ^ (-i) = 1 := by
   sorry
-
-noncomputable def rerror {a : ℝ}{b : ℝ}: ℝ :=
-  abs ((b - a) / a)
+def rerror? {K: Type}[LinearOrderedField K](a : K)(b : K): Option K :=
+  if a ≠ 0 then
+    let re := |((b - a) / a)|
+    some re
+  else none
 
 def closer (x y z : ℝ): Prop :=
   abs (x - z) < abs (y - z)
