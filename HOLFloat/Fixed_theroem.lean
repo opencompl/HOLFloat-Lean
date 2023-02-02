@@ -1,5 +1,8 @@
+import Mathlib
 import HOLFloat.Common
 import HOLFloat.Fixed
+
+--TODO: move all the theorems here
 
 --set_option pp.all  true
 --
@@ -24,3 +27,10 @@ theorem fformat_radix_lt_0 : ∀ (fmt : fformat), 0 < fmt.val.r := by
   have h₂ : 0 < (1 : Int) := by trivial
   apply Int.lt_trans h₂ h₁
 
+theorem  gt_zero_ne_zero (x : Int) : 1 < x → x ≠ 0 := by
+  intros h h₁; simp [h₁] at h;
+
+theorem fformat_radix_ne_0 : ∀(fmt : fformat), fmt.val.r ≠ 0 := by
+  intro h;
+  have h₁ := h.prop.left
+  apply gt_zero_ne_zero; trivial
