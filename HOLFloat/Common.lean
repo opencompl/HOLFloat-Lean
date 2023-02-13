@@ -1,10 +1,15 @@
 import Mathlib
-set_option pp.all true
+import Std
+--set_option pp.all true
 
 def ipow (r : ℝ) (i : ℤ): ℝ :=
   match i with
   | Int.ofNat   n => r ^ n
   | Int.negSucc n => r ^ (0 - n)
+
+#check ipow
+
+#eval ipow 1 (-10)
 
 instance : HPow ℝ ℤ ℝ where
   hPow := ipow
@@ -18,19 +23,25 @@ def real_mul (r : ℝ) (i : ℤ) : ℝ :=
   match i with
   | Int.ofNat   n => r * n
   | Int.negSucc n => r * (0 - n)
+
 instance : HMul ℝ ℤ ℝ where
   hMul := real_mul
 instance : HPow ℤ ℤ ℤ where
   hPow := pow_int
 
 theorem ipow_lt_zero {r : ℝ}{i : ℤ} : 0 < r → 0 < r ^ i := by
-  sorry
+  intro h
+  cases i with
+  | ofNat n =>
+    sorry
+  | negSucc n => 
+    sorry
 
 theorem ipow_inv_neg {r : ℝ}{i : ℤ} : r ≠ 0 → r ^ i = Inv.inv (r ^(-i)) := by
   sorry
 
 theorem ipow_add_exp {r : ℝ}(u : ℤ)(v : ℤ) : r ≠ 0 → r ^ u * r ^ v = r ^ (u + v) := by
-sorry
+  sorry
 
 /- 
 theorem ipow_eq_exp
@@ -65,6 +76,7 @@ theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r → u ≤ v → 
   sorry
 theorem ipow_mul_inv_eq_one {r : ℝ}{i : ℤ} : 0 < r → r ^ i * r ^ (-i) = 1 := by
   sorry
+
 def rerror? {K: Type}[LinearOrderedField K](a : K)(b : K): Option K :=
   if a ≠ 0 then
     let re := |((b - a) / a)|
@@ -73,3 +85,25 @@ def rerror? {K: Type}[LinearOrderedField K](a : K)(b : K): Option K :=
 
 def closer (x y z : ℝ): Prop :=
   abs (x - z) < abs (y - z)
+open Int
+theorem Int.one_lt_zero_lt (i : ℤ) : 1 < i → 0 < i := by
+  intro h
+  have hz : (0: ℤ) < 1 := by simp
+  apply lt_trans hz h
+
+-- sup inf definitions
+def is_sup_int (s : Int → Prop)(e : Int): Prop :=
+  s e ∧ ∀(k : Int) , s k → (k ≤ e)
+
+def is_sup_real ( s : ℝ → Prop)(r : ℝ) : Prop :=
+  s r ∧  ∀(k : ℝ) , s k → (k ≤ r)
+
+/-
+open Classical
+noncomputable def sup_num (s : ℝ → Prop) : ℝ :=
+  Classical.epsilon (is_sup_real s)
+
+noncomputable def sup_int (s : ℤ → Prop) : ℤ :=
+  Classical.epsilon (is_sup_int s)
+
+-/

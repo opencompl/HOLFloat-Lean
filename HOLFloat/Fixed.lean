@@ -1,23 +1,20 @@
 import Mathlib
 import HOLFloat.Common
---set_option pp.all  true
-def is_valid_fformat (r p : Int) : Prop :=
-    1 < r 
-  ∧ (r % 2 = 0) 
-  ∧ 0 < p
 
+--set_option pp.all  true
 structure format where
   r : ℤ
   p : ℤ
   e : ℤ
 deriving Repr
-def fformat :=
-  {fmt : format // is_valid_fformat fmt.r fmt.p }
-  
 
-#check (1: Int) ^ (1 : Int)
+def is_valid_fformat (x : format) : Prop :=
+  1 < x.r ∧ (x.r % 2 = 0) ∧ 0 < x.p
 
-def is_frac (fmt : fformat)(x: ℝ)(f: ℤ) : Prop :=
+abbrev fformat : Type :=
+  {fmt : format // is_valid_fformat fmt}
+
+def is_frac (fmt : fformat )(x: ℝ)(f: ℤ) : Prop :=
   let e1 := fmt.val.r ^ (fmt.val.r - 1)
   let p1 := f ≤ e1
   let p2 := |x| = f * fmt.val.r ^ (fmt.val.e - fmt.val.p + 1)
