@@ -2,11 +2,7 @@ import Mathlib
 import HOLFloat.Common
 
 --set_option pp.all  true
-structure format where
-  r : ℤ
-  p : ℤ
-  e : ℤ
-deriving Repr
+
 
 def is_valid_fformat (x : format) : Prop :=
   1 < x.r ∧ (x.r % 2 = 0) ∧ 0 < x.p

@@ -2,8 +2,8 @@ import HOLFloat.Common
 import HOLFloat.Fixed
 import Mathlib
 import Aesop
-
-def is_valid_flformat (fmt : format) :=
+set_option pp.all true
+def is_valid_flformat (fmt : format): Prop :=
     1 < fmt.r
   ∧ fmt.r % 2 = 0
   ∧ 1 < fmt.p
@@ -20,9 +20,6 @@ def is_frac_and_exp (fmt: flformat)(x : ℝ)(f : ℤ)(e : ℤ): Prop:=
 def is_float (fmt: flformat) (x : ℝ): Prop :=
   ∃(f: ℤ)(e :ℤ), is_frac_and_exp fmt x f e
 
-def vector (α : Type u ) (n : ℕ) := {l : List α // l.length= n} 
-def myVector : vector ℕ 3 := ⟨[1,2,3], rfl⟩
-
 theorem flformat_to_fformat {float : flformat} : is_valid_fformat float.val := by
   apply And.intro
   case left => 
@@ -35,7 +32,6 @@ theorem flformat_to_fformat {float : flformat} : is_valid_fformat float.val := b
       apply Int.one_lt_zero_lt
       exact float.prop.right.right
 
-  
 def to_fformat (fmt : flformat): fformat :=
   ⟨fmt.val, by simp [flformat_to_fformat]⟩
 
