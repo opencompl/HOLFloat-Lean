@@ -18,6 +18,7 @@ def ipow (r : ℝ) (i : ℤ): ℝ :=
 
 instance : HPow ℝ ℤ ℝ where
   hPow := ipow
+
 @[aesop safe]
 def pow_int(r : ℤ) (i : ℤ): ℤ :=
   match i with
@@ -34,6 +35,7 @@ instance : HMul ℝ ℤ ℝ where
   hMul := real_mul
 instance : HPow ℤ ℤ ℤ where
   hPow := pow_int
+
 @[simp]
 theorem ipow_lt_zero {r : ℝ}{i : ℤ} : 0 < r → 0 < r ^ i := by
   intro h
@@ -60,7 +62,7 @@ theorem ipow_eq_exp_p
 theorem ipow_between {x : ℝ}{y z i : ℤ} : 
   (0 < x) → (y * x ^ e ≤ z * x ^ e) → (z * x ^ e ≤ (y + 1) * x ^ e) 
   → (z = y) ∨ (z = y + 1):= by
-  sorry
+  aesop
 
 @[simp]
 theorem ipow_to_one {r : ℝ} : r ^ 1 = r := by
@@ -102,12 +104,11 @@ theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r → u ≤ v → 
 theorem ipow_mul_inv_eq_one {r : ℝ}{i : ℤ} : 0 < r → r ^ i * r ^ (-i) = 1 := by
   sorry
 
-def rerror? {K: Type}[LinearOrderedField K](a : K)(b : K): Option K :=
-  if a ≠ 0 then
-    let re := |((b - a) / a)|
-    some re
-  else none
+noncomputable def rerror (a : ℝ)(b : ℝ): ℝ :=
+  |((b - a) / a)|
 
+variable (x : ℝ := 1)
+variable (y : ℝ := 2)
 def closer (x y z : ℝ): Prop :=
   abs (x - z) < abs (y - z)
 
@@ -116,19 +117,19 @@ theorem Int.one_lt_zero_lt (i : ℤ) : 1 < i → 0 < i := by
   intro h
   have hz : (0: ℤ) < 1 := by simp
   apply lt_trans hz h
+
 -- sup inf definitions
 def is_sup_int (s : Int → Prop)(e : Int): Prop :=
-  s e ∧ ∀(k : Int) , s k → (k ≤ e)
+  s e 
+  ∧ ∀(k : Int) , s k → (k ≤ e)
 
 def is_sup_real ( s : ℝ → Prop)(r : ℝ) : Prop :=
-  s r ∧  ∀(k : ℝ) , s k → (k ≤ r)
+  s r 
+  ∧ ∀(k : ℝ) , s k → (k ≤ r)
 
-/-
 open Classical
 noncomputable def sup_num (s : ℝ → Prop) : ℝ :=
   Classical.epsilon (is_sup_real s)
 
 noncomputable def sup_int (s : ℤ → Prop) : ℤ :=
   Classical.epsilon (is_sup_int s)
-
--/

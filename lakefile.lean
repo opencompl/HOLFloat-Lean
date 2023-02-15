@@ -13,3 +13,4 @@ lean_exe runLinter where
   supportInterpreter := true
 
 require mathlib from git "https://github.com/leanprover-community/mathlib4.git" @ "master"
+require aesop from git "https://github.com/JLimperg/aesop" @ "master"

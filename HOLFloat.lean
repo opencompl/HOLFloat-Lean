@@ -1,9 +1,10 @@
 import HOLFloat.Common
 import HOLFloat.Fixed
 import HOLFloat.Float
---import HOLFloat.IEEE
---
-variable (x := format.mk 1 2 3 )
-variable (x : fformat )
-variable (y : format := x.val)
-variable (y : fformat)
+
+--NOTE: 
+-- - How do we check our formal semantics? 
+-- - Can we check it by using lean-mlir?
+-- - How do we know that `noncomputable` does not affect our output?
+-- - Should we define operations on ieee floats
+

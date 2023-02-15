@@ -22,7 +22,7 @@ abbrev ieee_format : Type :=
 def mk_format (fmt : ieee_format) : format :=
     format.mk fmt.val.r fmt.val.p fmt.val.emin
 
-@[aesop safe]
+@[simp]
 theorem ieee_to_flformat {fmt : ieee_format} : is_valid_flformat (mk_format fmt) := by
   have h := fmt.prop
   apply And.intro
@@ -38,6 +38,7 @@ theorem ieee_to_flformat {fmt : ieee_format} : is_valid_flformat (mk_format fmt)
 def to_flformat (fmt : ieee_format): flformat:=
   ⟨mk_format fmt, by apply ieee_to_flformat⟩
 
+--NOTE: is there a way to replace Coe.coe with ⟨⟩ ?
 instance : Coe ieee_format fformat where
   coe fmt :=  to_fformat <| to_flformat  fmt
 
@@ -63,7 +64,6 @@ def is_ieee (fmt :ieee_format) (x : ℝ) : Prop :=
     greatest_e (Coe.coe fmt) x ≤ fmt.val.emax) 
   ∨ is_ieee_pinf fmt x
   ∨ is_ieee_ninf fmt x
-
 noncomputable def ieee_exp (fmt : ieee_format)(x : ℝ) : ℤ :=
   if |x| ≤ finf (Coe.coe fmt) then
     fmt.val.emin

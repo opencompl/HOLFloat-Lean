@@ -1,4 +1,4 @@
-import Mathlib
+import Mathlib.Data.Real.Basic
 import HOLFloat.Common
 
 --set_option pp.all  true
@@ -35,7 +35,7 @@ def finf (fmt: fformat) : ℝ :=
   fmt.val.r ^ fmt.val.e
 
 abbrev fixed (fmt: fformat) : Set ℝ :=
-  fun x: ℝ => is_fixed fmt x
+  { x | is_fixed fmt x}
 
 def is_ub (fmt : fformat) (x y : ℝ) : Prop :=
   y ∈ fixed fmt ∧ x ≤ y
