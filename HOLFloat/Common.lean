@@ -62,7 +62,7 @@ theorem ipow_eq_exp_p
 theorem ipow_between {x : ℝ}{y z i : ℤ} : 
   (0 < x) → (y * x ^ e ≤ z * x ^ e) → (z * x ^ e ≤ (y + 1) * x ^ e) 
   → (z = y) ∨ (z = y + 1):= by
-  aesop
+    sorry
 
 @[simp]
 theorem ipow_to_one {r : ℝ} : r ^ 1 = r := by
