@@ -2,6 +2,5 @@
 
 
 We formalize the semantics of floating point behaviour in Lean4,
-following the formalization in [Floating-point verification by John Harrison,
-developed in HOL Light](https://www.cl.cam.ac.uk/~jrh13/papers/sfm.pdf).
-
+following the formalization in [Floating point verification in HOL Light: the exponential
+function](https://www.cl.cam.ac.uk/~jrh13/papers/tang.pdf).
