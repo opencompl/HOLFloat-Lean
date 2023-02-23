@@ -18,6 +18,10 @@ def is_valid_ieee_format(fmt : format') : Prop :=
 abbrev ieee_format : Type :=
   {fmt : format' // is_valid_ieee_format fmt}
 
+def ieee_format.pnat : ieee_format → ℕ 
+| { val := { r := _, p := p, e := _, emin := _, emax := _ }, property := _ } => p.toNat
+
+
 -- making common format
 def mk_format (fmt : ieee_format) : format :=
     format.mk fmt.val.r fmt.val.p fmt.val.emin
@@ -45,11 +49,11 @@ instance : Coe ieee_format fformat where
 instance : Coe ieee_format flformat where
   coe fmt := to_flformat fmt
 -- Largest ieee fp magnitude = f_max * r^(emax - p + 1)
-def max_ieee (fmt : ieee_format): ℤ :=
-  (fmt.val.r ^ fmt.val.p - 1) * (fmt.val.r) ^ (fmt.val.emax - fmt.val.p + 1)
+def max_ieee (fmt : ieee_format): ℚ :=
+  (fmt.val.r ^ fmt.val.p - (1 : ℚ) )* (fmt.val.r) ^ (fmt.val.emax - fmt.pnat + 1)
 
-def ieee_threshold (fmt :ieee_format) : ℤ :=
-  max_ieee fmt + fmt.val.r ^ (fmt.val.emax - fmt.val.p + 1)
+def ieee_threshold (fmt :ieee_format) : ℚ :=
+  max_ieee fmt + fmt.val.r ^ (fmt.val.emax - fmt.pnat + 1)
 
 def is_ieee_pinf ( fmt : ieee_format) (x : ℝ): Prop :=
   ⟨(ieee_threshold fmt)⟩ ≤ x

@@ -1,49 +1,31 @@
 import Mathlib
-import Std
+import Aesop
 --set_option pp.all true
+
 structure format where
   r : ℤ
   p : ℤ
   e : ℤ
 deriving Repr
 
-def ipow (r : ℝ) (i : ℤ): ℝ :=
-  match i with
-  | Int.ofNat   n => r ^ n
-  | Int.negSucc n => r ^ (0 - n)
-
-#check ipow
-
-#eval ipow 1 (-10)
-
-instance : HPow ℝ ℤ ℝ where
-  hPow := ipow
+@[aesop safe]
+def pow_int(r : ℤ) (i : ℤ): ℚ :=
+  (r : ℚ) ^ i
 
 @[aesop safe]
-def pow_int(r : ℤ) (i : ℤ): ℤ :=
-  match i with
-  | Int.ofNat   n => r ^ n
-  | Int.negSucc n => r ^ (0 - n)
-
-@[aesop safe]
-def real_mul (r : ℝ) (i : ℤ) : ℝ :=
-  match i with
-  | Int.ofNat   n => r * n
-  | Int.negSucc n => r * (0 - n)
+def real_mul (r : ℝ) (i :ℤ) : ℝ :=
+  r * (i : ℝ)
 
 instance : HMul ℝ ℤ ℝ where
   hMul := real_mul
-instance : HPow ℤ ℤ ℤ where
+
+instance : HPow ℤ ℤ ℚ where
   hPow := pow_int
 
 @[simp]
 theorem ipow_lt_zero {r : ℝ}{i : ℤ} : 0 < r → 0 < r ^ i := by
   intro h
-  cases i with
-  | ofNat n =>
-    sorry
-  | negSucc n => 
-    sorry
+  sorry
 
 @[simp]
 theorem ipow_inv_neg {r : ℝ}{i : ℤ} : r ≠ 0 → r ^ i = Inv.inv (r ^(-i)) := by
@@ -107,8 +89,6 @@ theorem ipow_mul_inv_eq_one {r : ℝ}{i : ℤ} : 0 < r → r ^ i * r ^ (-i) = 1 
 noncomputable def rerror (a : ℝ)(b : ℝ): ℝ :=
   |((b - a) / a)|
 
-variable (x : ℝ := 1)
-variable (y : ℝ := 2)
 def closer (x y z : ℝ): Prop :=
   abs (x - z) < abs (y - z)
 
@@ -120,12 +100,10 @@ theorem Int.one_lt_zero_lt (i : ℤ) : 1 < i → 0 < i := by
 
 -- sup inf definitions
 def is_sup_int (s : Int → Prop)(e : Int): Prop :=
-  s e 
-  ∧ ∀(k : Int) , s k → (k ≤ e)
+  IsLUB s e
 
 def is_sup_real ( s : ℝ → Prop)(r : ℝ) : Prop :=
-  s r 
-  ∧ ∀(k : ℝ) , s k → (k ≤ r)
+  IsGLB s r
 
 open Classical
 noncomputable def sup_num (s : ℝ → Prop) : ℝ :=

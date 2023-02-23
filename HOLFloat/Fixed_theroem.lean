@@ -1,8 +1,9 @@
 import Mathlib
 import HOLFloat.Common
 import HOLFloat.Fixed
-
+-- Note: Using Aesop for proof searches
 --set_option pp.all  true
+
 @[simp]
 theorem fformat_valid_imp_radix_lt_one {fmt : format} : is_valid_fformat fmt → 1 < fmt.r := by
   intro h; exact h.left
@@ -57,11 +58,9 @@ let FFORMAT_PREC_IPOW_EQ_EXP =
 
 @[simp]
 theorem fformat_radix_ipow_le_0 (fmt : fformat)(e : ℤ) : fmt.val.r ^ e ≠ 0 := by
-  simp [HPow.hPow, pow_int]
-  have h := fformat_radix_ne_0 fmt
+  simp [HPow.hPow, Pow.pow]
   cases e with
   | ofNat n =>
-      apply pow_ne_zero n h
+    simp [pow_ne_zero]
   | negSucc n =>
-      simp_all only [ne_eq, fformat_radix_lt_1, gt_zero_ne_zero, not_false_iff, pow_zero, one_ne_zero]
-
+    aesop

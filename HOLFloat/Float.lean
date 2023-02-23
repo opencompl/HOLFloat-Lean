@@ -2,7 +2,7 @@ import HOLFloat.Common
 import HOLFloat.Fixed
 import Mathlib
 import Aesop
-set_option pp.all true
+--set_option pp.all true
 def is_valid_flformat (fmt : format): Prop :=
     1 < fmt.r
   ∧ fmt.r % 2 = 0
@@ -12,10 +12,18 @@ def is_valid_flformat (fmt : format): Prop :=
 abbrev flformat : Type :=
   {fmt : format // is_valid_flformat fmt}
 
+
+def flformat.pnat : flformat → ℕ 
+| { val := { r := r, p := p, e := e}, property := P } => p.toNat
+  /-
+  \ in an flformat, the 'p' is always > 0, and is thus
+  a natural number
+  -/
+
 def is_frac_and_exp (fmt: flformat)(x : ℝ)(f : ℤ)(e : ℤ): Prop:= 
   0 < f 
-  ∧ f < fmt.val.r  ^ fmt.val.p
-  ∧ |x| = f * fmt.val.r ^ (e - fmt.val.p + 1)
+  ∧ f < fmt.val.r  ^ fmt.pnat
+  ∧ |x| = f * ((fmt.val.r ^ (e - fmt.pnat + 1)) : ℝ)
 
 def is_float (fmt: flformat) (x : ℝ): Prop :=
   ∃(f: ℤ)(e :ℤ), is_frac_and_exp fmt x f e
@@ -43,13 +51,13 @@ noncomputable def greatest_e (fmt : flformat) (x : ℝ): ℤ :=
   supₛ {z : ℤ | ⟨fmt.val.r ^ z⟩  ≤ |x|}
 
 noncomputable def greatest_m (fmt : flformat) (x : ℝ) : ℝ :=
-  supₛ {m : ℝ | m * fmt.val.r ^ greatest_e fmt x ≤ |x|}
+  supₛ {m : ℝ | m * (fmt.val.r ^ greatest_e fmt x : ℝ) ≤ |x|}
 
 noncomputable def greatest_r ( fmt : flformat ) (x : ℝ) : ℝ := 
   if (0 ≤ x) then 
-    (x - greatest_m fmt x) * (fmt.val.r) ^ (greatest_e fmt x)
+    (x - greatest_m fmt x) * ((fmt.val.r) ^ (greatest_e fmt x) : ℝ)
   else
-    (x + greatest_m fmt x) * (fmt.val.r) ^ (greatest_e fmt x)
+    (x + greatest_m fmt x) * ((fmt.val.r) ^ (greatest_e fmt x) : ℝ)
 
 -- Rounding
 --
@@ -58,13 +66,13 @@ noncomputable def flround (fmt : flformat) (mode : roundmode)( x : Real) : Real 
   let (e : ℤ) := greatest_e fmt x
   let (r : ℝ) := greatest_r fmt x
   if (0 ≤ x) then
-    m * fmt.val.r ^ e + (fround (Coe.coe fmt) mode r)
+    m * (fmt.val.r ^ e : ℝ) + (fround (Coe.coe fmt) mode r)
   else
-    - ((m * fmt.val.r ^ e) + fround (Coe.coe fmt) mode r)
+    - ((m * (fmt.val.r ^ e : ℝ)) + fround (Coe.coe fmt) mode r)
 
 -- Machine Epsilon
 --
 -- fl_eps = r ^ (-p + 1) / 2
 def fl_eps (fmt : flformat) : ℤ :=
-  fmt.val.r ^ ( 1 - fmt.val.p) / 2
+  fmt.val.r ^ (1 - fmt.pnat) / (2 : ℤ)
   

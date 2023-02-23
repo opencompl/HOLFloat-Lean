@@ -1,4 +1,4 @@
-import Mathlib.Data.Real.Basic
+import Mathlib
 import HOLFloat.Common
 
 --set_option pp.all  true
@@ -10,10 +10,10 @@ def is_valid_fformat (x : format) : Prop :=
 abbrev fformat : Type :=
   {fmt : format // is_valid_fformat fmt}
 
-def is_frac (fmt : fformat )(x: ℝ)(f: ℤ) : Prop :=
+noncomputable def is_frac (fmt : fformat)(x: ℝ)(f: ℤ) : Prop :=
   let e1 := fmt.val.r ^ (fmt.val.r - 1)
   let p1 := f ≤ e1
-  let p2 := |x| = f * fmt.val.r ^ (fmt.val.e - fmt.val.p + 1)
+  let p2 := |x| = f * (fmt.val.r ^ (fmt.val.e - fmt.val.p + 1) : ℝ)
   p1 ∧ p2
 
 open Classical
@@ -24,7 +24,7 @@ noncomputable def ff (fmt: fformat)(x: ℝ) : ℤ :=
 def is_fixed (fmt: fformat)(x: ℝ) : Prop :=
   ∃ f, is_frac fmt x f
 def is_fin_fixed (fmt: fformat)(x: ℝ) : Prop :=
-  ∃ f, is_frac fmt x f ∧ f < fmt.val.r ^ (fmt.val.p - 1)
+  ∃ f, is_frac fmt x f ∧ (f : ℚ) < fmt.val.r ^ (fmt.val.p - 1)
 
 -- fix point ulp
 
