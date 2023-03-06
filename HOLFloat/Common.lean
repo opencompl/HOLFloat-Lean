@@ -91,12 +91,10 @@ theorem ipow_lt_one {r : ℝ}{i : ℤ} : 1 < r → 0 < i → 1 < r ^ i := by
 @[simp]
 theorem ipow_le_sum {r : ℝ}{n : ℝ} : 2 ≤ r → 0 ≤ i → ∃(e : ℤ), n ≤ r ^ e := by
   sorry
-  
-
-      
 
 @[simp]
-theorem ipow_le_real {r : ℝ}{z : ℝ} : 2 ≤ r → ∃ e : ℤ , z ≤ r ^ e := by
+theorem ipow_le_real {r : ℝ}{z : ℝ} : 2 ≤ r → ∃ (e : ℤ) , z ≤ r ^ e := by
+  --TODO: finding the bound using log is impossible because log isn't defined yet in mathlib4 for real numbers
   sorry
 
 @[simp]
