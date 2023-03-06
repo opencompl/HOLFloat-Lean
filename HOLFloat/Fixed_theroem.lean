@@ -44,7 +44,8 @@ theorem fformat_radix_even (fmt :fformat) : fmt.val.r % 2 = 0 := by
 
 @[simp]
 theorem fformat_prec_lt_0 (fmt : fformat) : 0 < fmt.val.p := by
-  simp [fmt.prop.right.right]
+  have h := fmt.prop.right.right
+  exact h
 
 -- NOTE: Don't think we need this
 /-
@@ -58,9 +59,15 @@ let FFORMAT_PREC_IPOW_EQ_EXP =
 
 @[simp]
 theorem fformat_radix_ipow_le_0 (fmt : fformat)(e : ℤ) : fmt.val.r ^ e ≠ 0 := by
-  simp [HPow.hPow, Pow.pow]
+  simp [HPow.hPow, Pow.pow, pow_int]
   cases e with
   | ofNat n =>
     simp [pow_ne_zero]
   | negSucc n =>
-    aesop
+  -- HACK: using aesop
+    simp_all only [zpow_negSucc, inv_eq_zero, add_pos_iff, or_true, pow_eq_zero_iff, Int.cast_eq_zero, fformat_radix_lt_1,
+    gt_zero_ne_zero, not_false_iff]
+
+-- NOTE: proving some theorems from the paper
+
+--NOTE: Major theorems goes here
