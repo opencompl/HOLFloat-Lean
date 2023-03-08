@@ -1,29 +1,10 @@
 --TODO: Port Theorems. 
---
 import Mathlib
 import HOLFloat.Common
 import HOLFloat.Fixed
 import HOLFloat.Float
 import Aesop
 set_option trace.aesop.steps true
-/-
-let FLOAT_NORMALIZE_REAL =
-  prove(`!(fmt:flformat) (x:real). ~(x = &0) ==>
-	  (if (&0 <= x)
-	   then
-	     x = &(greatest_m(fmt) x) * &(flr fmt) ipow (greatest_e(fmt) x) +
-		 (greatest_r(fmt) x)
-	   else 
-	     x = -- (&(greatest_m(fmt) x) * 
-                     &(flr fmt) ipow (greatest_e(fmt) x)) +
-		 (greatest_r(fmt) x))`,
-	REPEAT GEN_TAC THEN DISCH_THEN (LABEL_TAC "xneq0") THEN
-	USE_THEN "xneq0" (fun xneq0 -> old_dump_ge_gm_gr_info xneq0) THEN
-        REWRITE_TAC[greatest_r] THEN ASM_REWRITE_TAC[] THEN
-        ARITH_TAC);;
--/
--- NOTE: goal: prove FLOAT_NORMALIZE_REAL
-
 @[simp]
 theorem flformat_radix_lt_0 (fmt:flformat) : 0 < fmt.val.r := by
   linarith [fmt.prop.left]
@@ -76,22 +57,73 @@ theorem float_ipow_le_real_2 (fmt :flformat)(x : ℝ) : 0 < x → ∃(e:ℤ), x 
   apply ipow_le_real
   simp_all only [flformat_radix_le_2_real]
 
-@[aesop unsafe apply]
+@[aesop unsafe]
 def is_greatest_e (fmt : flformat)(x : ℝ)(e : ℤ) : Prop :=
   (fmt.val.r : ℝ) ^ e  ≤ |x| ∧
   ∀(e' : ℤ), (fmt.val.r : ℝ) ^ e' ≤ |x| → e' ≤ e
 
+#eval (2 : ℤ) ^ (-2 : ℤ)
 
 @[simp]
-theorem float_greatest_e_exists (fmt:flformat)(x : ℝ) : x ≠ 0 → ∃ (e : ℤ), greatest_e fmt x = e ∧ is_greatest_e fmt x e :=  by
-  intro h
-  simp [greatest_e, is_greatest_e]
-  norm_cast
+theorem float_greatest_e_exists (fmt:flformat) (x : ℝ)(e : ℤ) : x ≠ 0 → e = greatest_e fmt x → is_greatest_e fmt x e :=  by
+  have ⟨fmt_val, FMT⟩ := fmt
+  intro hx he
+  simp only [greatest_e, is_greatest_e] at *
+  simp only [ne_eq, Int.cast_eq_zero]
+  apply And.intro
+  case left =>
+    norm_cast
+    suffices e ∈  { z : ℤ | (fmt_val.r : ℝ) ^ z ≤ abs x } by {
+      have H := this.out;
+      have R_GT_1 : 1 < fmt_val.r := FMT.left;
+      norm_cast at H;
+    }
+    rw[he];
+    apply Int.csupₛ_mem;
+    case h1 => {
+      have R_GT_1 : 1 < fmt_val.r := FMT.left;
+      -- show the existnece of a negative z that makes this true.
+      -- please kill me
+      -- ok
+      -- r ^ z < x → (1 / (r ^ z)) > x → (1/r) ^ z > x, use pow_unbounded_of_one_lt
+      -- writing this won't shoot myself
+      simp[Set.Nonempty]; sorry
+    }
+    case h2 => {
+      exists 42 -- fake bound, need log.
+      simp[BddAbove];
+      simp[upperBounds];
+      intros a H;
+      sorry -- need some theory of log to exhibit an upper bound
+      
+    }
+  case right => sorry
+
+def is_greatest_m (fmt:flformat) (x: ℝ) (m : ℤ): Prop :=
+  m * (fmt.val.r : ℝ) ^ (greatest_e fmt x) ≤ |x| ∧
+  ∃(m' : ℤ), m * (fmt.val.r : ℝ)  ^ (greatest_e fmt x) ≤ |x| → m' <= m
+
+--NOTE: theorems for mantissa
+@[simp]
+theorem float_greatest_m_exists (fmt : flformat)(x : ℝ) (m : ℤ): 
+  x ≠ 0 
+  → greatest_m fmt x = m 
+  → is_greatest_m fmt x m ∧ 1 ≤ m ∧ m < fmt.val.r := by
+  sorry
+--NOTE: theorems for exponent
+theorem is_greatest_e_exist_greatest_e (fmt :flformat)( e : ℤ) : x ≠ 0 → is_greatest_e fmt x e → greatest_e fmt x = e := by
+  intro hx he
+  simp
   sorry
 
+--TODO: theorem float_normalize_real
+@[simp]
+theorem float_normalize_real (fmt : flformat) (x : ℝ) : x < 0 → x = greatest_m fmt x * (fmt.val.r : ℝ) ^ greatest_e fmt x + greatest_r fmt x := by
+  intro h
+  sorry
 @[simp]
 theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℤ) :
-  x ≠ 0 → 1 ≤ m → m < fmt.val.r → |x| = m * (fmt.val.r : ℝ) ^ e  
+  x ≠ 0 → 1 ≤ m → m < fmt.val.r → |x| = m * (fmt.val.r : ℝ) ^ e 
   → greatest_e fmt x  = e ∧ greatest_m fmt x = m  := by
   intros hx hm hr he
   apply And.intro
@@ -99,3 +131,4 @@ theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℤ) :
     sorry
   case right =>
     sorry
+

@@ -102,12 +102,13 @@ theorem ipow_le_real_two {r : ℝ}{z : ℝ} : 0 < z → 2 ≤ r → ∃ e : ℤ 
   sorry
 
 @[simp]
-theorem ipow_monotone {r : ℝ}{u : ℤ}{v : ℤ} : 2 ≤ r → r ^ u ≤ r ^ v → u ≤ v := by
+theorem ipow_monotone {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r → u ≤ v → r ^ u ≤ r ^ v := by
   sorry
 
 @[simp]
-theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r → u ≤ v → r ^ u ≤ r ^ v := by
+theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 2 ≤ r → r ^ u ≤ r ^ v → u ≤ v := by
   sorry
+
 
 @[simp]
 theorem ipow_mul_inv_eq_one {r : ℝ}{i : ℤ} : 0 < r → r ^ i * r ^ (-i) = 1 := by

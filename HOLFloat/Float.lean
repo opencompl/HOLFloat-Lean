@@ -55,7 +55,7 @@ instance : Coe flformat fformat where
 -- Normalization
 @[aesop unsafe]
 noncomputable def greatest_e (fmt : flformat) (x : ℝ): ℤ :=
-  supₛ {z : ℤ | ⟨fmt.val.r ^ z⟩  ≤ |x|}
+  supₛ {z : ℤ | (fmt.val.r : ℝ) ^ z  ≤ |x|}
 
 @[aesop unsafe]
 noncomputable def greatest_m (fmt : flformat) (x : ℝ) : ℝ :=
