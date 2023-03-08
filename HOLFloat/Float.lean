@@ -23,15 +23,15 @@ def flformat.pnat : flformat → ℕ
   a natural number
   -/
 
-@[aesop safe]
+@[aesop safe, simp]
 def is_frac_and_exp (fmt: flformat)(x : ℝ)(f : ℤ)(e : ℤ): Prop:= 
   0 < f 
   ∧ f < fmt.val.r  ^ fmt.pnat
   ∧ |x| = f * ((fmt.val.r ^ (e - fmt.pnat + 1)) : ℝ)
 
-@[aesop safe]
+@[aesop safe, simp]
 def is_float (fmt: flformat) (x : ℝ): Prop :=
-  ∃(f: ℤ)(e :ℤ), is_frac_and_exp fmt x f e
+  ∃(f: ℤ)(e : ℤ), is_frac_and_exp fmt x f e
 
 @[simp]
 theorem flformat_to_fformat {float : flformat} : is_valid_fformat float.val := by
@@ -83,7 +83,6 @@ noncomputable def flround (fmt : flformat) (mode : roundmode)( x : Real) : Real 
 -- Machine Epsilon
 --
 -- fl_eps = r ^ (-p + 1) / 2
-@[aesop unsafe apply]
+@[aesop unsafe]
 def fl_eps (fmt : flformat) : ℤ :=
   fmt.val.r ^ (1 - fmt.pnat) / (2 : ℤ)
-  

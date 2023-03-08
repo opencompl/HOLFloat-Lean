@@ -76,3 +76,26 @@ theorem float_ipow_le_real_2 (fmt :flformat)(x : ℝ) : 0 < x → ∃(e:ℤ), x 
   apply ipow_le_real
   simp_all only [flformat_radix_le_2_real]
 
+@[aesop unsafe apply]
+def is_greatest_e (fmt : flformat)(x : ℝ)(e : ℤ) : Prop :=
+  (fmt.val.r : ℝ) ^ e  ≤ |x| ∧
+  ∀(e' : ℤ), (fmt.val.r : ℝ) ^ e' ≤ |x| → e' ≤ e
+
+
+@[simp]
+theorem float_greatest_e_exists (fmt:flformat)(x : ℝ) : x ≠ 0 → ∃ (e : ℤ), greatest_e fmt x = e ∧ is_greatest_e fmt x e :=  by
+  intro h
+  simp [greatest_e, is_greatest_e]
+  norm_cast
+  sorry
+
+@[simp]
+theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℤ) :
+  x ≠ 0 → 1 ≤ m → m < fmt.val.r → |x| = m * (fmt.val.r : ℝ) ^ e  
+  → greatest_e fmt x  = e ∧ greatest_m fmt x = m  := by
+  intros hx hm hr he
+  apply And.intro
+  case left =>
+    sorry
+  case right =>
+    sorry
