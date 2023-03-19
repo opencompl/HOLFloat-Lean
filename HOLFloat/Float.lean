@@ -45,6 +45,7 @@ theorem flformat_to_fformat {float : flformat} : is_valid_fformat float.val := b
     case right =>
       apply Int.one_lt_zero_lt
       exact float.prop.right.right
+
 @[aesop unsafe]
 def to_fformat (fmt : flformat): fformat :=
   ⟨fmt.val, by simp [flformat_to_fformat]⟩

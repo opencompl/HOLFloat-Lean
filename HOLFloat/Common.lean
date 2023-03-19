@@ -133,16 +133,27 @@ theorem Int.one_lt_zero_le_iff (i : ℤ) (j : ℤ) : j < i ↔ j + 1 ≤ i := by
     exact a
   · intro a
     exact a
+@[simp]
+theorem Int.one_lt_ne_one {a : ℤ}(h : 1 < a):a ≠ 1 := by
+  intro a_1
+  simp_all only [one_lt_zero_le_iff, ne_eq]
+
+
 -- sup inf definitions
+--
+@[aesop unsafe]
 def is_sup_int (s : Int → Prop)(e : Int): Prop :=
   IsLUB s e
-
+@[aesop unsafe]
 def is_sup_real ( s : ℝ → Prop)(r : ℝ) : Prop :=
   IsGLB s r
 
 open Classical
+
+@[aesop unsafe]
 noncomputable def sup_num (s : ℝ → Prop) : ℝ :=
   Classical.epsilon (is_sup_real s)
 
+@[aesop unsafe]
 noncomputable def sup_int (s : ℤ → Prop) : ℤ :=
   Classical.epsilon (is_sup_int s)
