@@ -61,12 +61,14 @@ theorem float_ipow_le_real_2 (fmt :flformat)(x : ℝ) : 0 < x → ∃(e:ℤ), x 
 
 @[aesop unsafe]
 def is_greatest_e (fmt : flformat)(x : ℝ)(e : ℤ) : Prop :=
+--TODO: use LUB
   (fmt.val.r : ℝ) ^ e  ≤ |x| ∧
   ∀(e' : ℤ), (fmt.val.r : ℝ) ^ e' ≤ |x| → e' ≤ e
 
 
 @[simp]
 theorem pow_le_real (a x : ℝ) (ha1 : a ≠ 1) (hx0 : x ≠ 0) : ∃ (z : ℤ), a ^ z ≤ abs x :=
+-- Chris proof
   if ha0 : a ≤ 0
   then ⟨1, (zpow_one a).symm ▸ le_trans ha0 (abs_nonneg _)⟩
   else if hal1 : a < 1
@@ -76,6 +78,16 @@ theorem pow_le_real (a x : ℝ) (ha1 : a ≠ 1) (hx0 : x ≠ 0) : ∃ (z : ℤ),
     else let ⟨k, hk⟩ := pow_unbounded_of_one_lt (abs x)⁻¹ (lt_of_le_of_ne (le_of_not_gt hal1) ha1.symm)
       ⟨-k, (inv_le_inv (abs_pos.2 hx0) (zpow_pos_of_pos (lt_of_not_ge ha0) _)).1
         (le_of_lt $ by simpa)⟩
+
+#check Set
+@[simp]
+theorem float_int_bounded (S : ℤ → Prop)(b : ℤ): (Set.Nonempty s) → (∀(e : ℤ), e ∈ setOf S → e ≤ b) → (∃(e' : ℤ), is_sup_int S e'):= by
+  intro hn ha
+  simp [setOf] at ha
+  simp [is_sup_int, IsLUB, IsLeast, lowerBounds, upperBounds]
+  --NOTE: :)
+  sorry
+
 @[simp]
 theorem float_greatest_e_exists (fmt:flformat) (x : ℝ)(e : ℤ) : x ≠ 0 → e = greatest_e fmt x → is_greatest_e fmt x e :=  by
   have ⟨fmt_val, FMT⟩ := fmt
@@ -110,16 +122,7 @@ theorem float_greatest_e_exists (fmt:flformat) (x : ℝ)(e : ℤ) : x ≠ 0 → 
       simp_all only [ne_eq, Int.one_lt_zero_le_iff, not_false_iff]
     }
     case h2 => {
-      
-     --NOTE: exists 42 -- fake bound, need log.
-      simp[BddAbove];
-      simp[upperBounds, Set.Nonempty];
-      exists e
-      intros e1 hp
-      norm_cast
-      have he1: e1 ∈ { z | (fmt_val.r: ℝ) ^ z ≤ abs x } :=  by
-        aesop_subst he
-        simp_all only [ne_eq, Int.one_lt_zero_le_iff, Int.cast_eq_zero, Set.mem_setOf_eq]
+      --NOTE: exists 42 -- fake bound, need log.
       sorry
     }
   case right =>
@@ -148,10 +151,17 @@ theorem float_greatest_m_exists (fmt : flformat)(x : ℝ) (m : ℤ):
   → is_greatest_m fmt x m ∧ 1 ≤ m ∧ m < fmt.val.r := by
   sorry
 
+
+
+
+
 --NOTE: theorems for exponent
 theorem is_greatest_e_exist_greatest_e (fmt :flformat)( e : ℤ) : x ≠ 0 → is_greatest_e fmt x e → greatest_e fmt x = e := by
   intro hx he
+  simp_all only [is_greatest_e, greatest_e]
+  
   sorry
+
 --TODO: theorem float_normalize_real
 @[simp]
 theorem float_normalize_real (fmt : flformat) (x : ℝ) : x < 0 → x = greatest_m fmt x * (fmt.val.r : ℝ) ^ greatest_e fmt x + greatest_r fmt x := by

@@ -10,11 +10,9 @@ def is_valid_fformat (x : format) : Prop :=
 abbrev fformat : Type :=
   {fmt : format // is_valid_fformat fmt}
 
-noncomputable def is_frac (fmt : fformat)(x: ℝ)(f: ℤ) : Prop :=
-  let e1 := fmt.val.r ^ (fmt.val.r - 1)
-  let p1 := f ≤ e1
-  let p2 := |x| = f * (fmt.val.r ^ (fmt.val.e - fmt.val.p + 1) : ℝ)
-  p1 ∧ p2
+def is_frac (fmt : fformat)(x: ℝ)(f: ℤ) : Prop :=
+    f ≤ (fmt.val.r : ℝ) ^ (fmt.val.p -1) 
+  ∧ |x| = f * (fmt.val.r : ℝ) ^ (fmt.val.e - fmt.val.p + 1)
 
 open Classical
 

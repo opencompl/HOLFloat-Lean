@@ -8,7 +8,6 @@ structure format where
   r : ℤ
   p : ℤ
   e : ℤ
-deriving Repr
 
 @[aesop unsafe]
 def pow_int(r : ℤ) (i : ℤ): ℚ :=
@@ -18,12 +17,11 @@ def pow_int(r : ℤ) (i : ℤ): ℚ :=
 def real_mul (r : ℝ) (i :ℤ) : ℝ :=
   r * (i : ℝ)
 
-instance : HMul ℝ ℤ ℝ where
+noncomputable instance : HMul ℝ ℤ ℝ where
   hMul := real_mul
 
 instance : HPow ℤ ℤ ℚ where
   hPow := pow_int
-
 @[aesop unsafe]
 theorem ipow_lt_zero {r : ℝ}{i : ℤ} : 0 < r → 0 < r ^ i := by
   intro h
@@ -64,13 +62,13 @@ theorem ipow_add_exp {r : ℝ} (u : ℤ) (v : ℤ) : r ≠ 0 → r ^ u * r ^ v =
 theorem ipow_eq_exp
 theorem ipow_eq_exp_p
 -/
-
+/-
 @[simp]
 theorem ipow_between {x : ℝ}{y z i : ℤ} : 
   (0 < x) → (y * x ^ e ≤ z * x ^ e) → (z * x ^ e ≤ (y + 1) * x ^ e) 
   → (z = y) ∨ (z = y + 1):= by
     sorry
-
+-/
 @[simp]
 theorem ipow_to_one {r : ℝ} : r ^ 1 = r := by
   simp
