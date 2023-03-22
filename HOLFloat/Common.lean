@@ -22,6 +22,27 @@ noncomputable instance : HMul ℝ ℤ ℝ where
 
 instance : HPow ℤ ℤ ℚ where
   hPow := pow_int
+
+open Int
+@[simp]
+theorem Int.one_lt_zero_lt (i : ℤ) : 1 < i → 0 < i := by
+  intro h
+  have hz : (0: ℤ) < 1 := by simp
+  apply lt_trans hz h
+@[simp]
+theorem Int.one_lt_zero_le_iff (i : ℤ) (j : ℤ) : j < i ↔ j + 1 ≤ i := by
+  apply Iff.intro
+  · intro a
+    exact a
+  · intro a
+    exact a
+@[simp]
+theorem Int.one_lt_ne_one {a : ℤ}(h : 1 < a):a ≠ 1 := by
+  intro a_1
+  simp_all only [one_lt_zero_le_iff, ne_eq]
+
+
+
 @[aesop unsafe]
 theorem ipow_lt_zero {r : ℝ}{i : ℤ} : 0 < r → 0 < r ^ i := by
   intro h
@@ -103,10 +124,15 @@ theorem ipow_le_real_two {r : ℝ}{z : ℝ} : 0 < z → 2 ≤ r → ∃ e : ℤ 
 theorem ipow_monotone {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r → u ≤ v → r ^ u ≤ r ^ v := by
   sorry
 
-@[simp]
-theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 2 ≤ r → r ^ u ≤ r ^ v → u ≤ v := by
-  sorry
 
+@[simp]
+theorem ipow_monotone_lt {r :ℝ}{u : ℤ}{v :ℤ} : 1 < r → u < v →  r ^ u < r ^ v := by
+  mono
+  intro a a_1
+  simp_all only [ne_eq, gt_iff_lt, zpow_lt_iff_lt]
+@[simp]
+theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 2 ≤ r → u ≤ v → r ^ u ≤ r ^ v  := by
+  sorry
 
 @[simp]
 theorem ipow_mul_inv_eq_one {r : ℝ}{i : ℤ} : 0 < r → r ^ i * r ^ (-i) = 1 := by
@@ -117,24 +143,6 @@ noncomputable def rerror (a : ℝ)(b : ℝ): ℝ :=
 
 def closer (x y z : ℝ): Prop :=
   abs (x - z) < abs (y - z)
-
-open Int
-@[simp]
-theorem Int.one_lt_zero_lt (i : ℤ) : 1 < i → 0 < i := by
-  intro h
-  have hz : (0: ℤ) < 1 := by simp
-  apply lt_trans hz h
-@[simp]
-theorem Int.one_lt_zero_le_iff (i : ℤ) (j : ℤ) : j < i ↔ j + 1 ≤ i := by
-  apply Iff.intro
-  · intro a
-    exact a
-  · intro a
-    exact a
-@[simp]
-theorem Int.one_lt_ne_one {a : ℤ}(h : 1 < a):a ≠ 1 := by
-  intro a_1
-  simp_all only [one_lt_zero_le_iff, ne_eq]
 
 
 -- sup inf definitions

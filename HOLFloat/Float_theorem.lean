@@ -152,21 +152,43 @@ theorem float_greatest_m_exists (fmt : flformat)(x : ℝ) (m : ℤ):
   sorry
 
 
-
-
-
 --NOTE: theorems for exponent
+@[simp]
 theorem is_greatest_e_exist_greatest_e (fmt :flformat)( e : ℤ) : x ≠ 0 → is_greatest_e fmt x e → greatest_e fmt x = e := by
   intro hx he
   simp_all only [is_greatest_e, greatest_e]
   
   sorry
-
+#check pow_le_real
 --TODO: theorem float_normalize_real
 @[simp]
 theorem float_normalize_real (fmt : flformat) (x : ℝ) : x < 0 → x = greatest_m fmt x * (fmt.val.r : ℝ) ^ greatest_e fmt x + greatest_r fmt x := by
   intro h
   sorry
+
+@[simp]
+theorem float_real_le_1_le (x : ℝ)(m :ℤ) : 0 < x → 1 ≤ m → x ≤ m * x := by
+  intro h₁ h₂
+  norm_cast
+  rw [le_mul_iff_one_le_left]
+  norm_cast
+  exact h₁
+  
+
+@[simp]
+theorem float_pow_int_eq_le (r : ℤ)(x : ℝ)(m : ℤ)(e : ℤ) : x ≠ 0 →1 ≤ m → abs x = m * (r:ℝ) ^ e → (r:ℝ) ^ e ≤ abs x := by
+  intro hx hm he
+  norm_cast
+  rw [he]
+  apply float_real_le_1_le
+  case a =>
+    norm_cast
+    suffices abs x > 0 by simp_all only [lt_self_iff_false, ne_eq, Int.cast_lt_zero, Int.one_lt_zero_le_iff, Int.cast_eq_zero, gt_iff_lt, Int.cast_pos, zero_add, zero_lt_mul_left]
+    simp; exact hx
+  case a =>
+    exact hm
+
+ 
 @[simp]
 theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℤ) :
   x ≠ 0 → 1 ≤ m → m < fmt.val.r → |x| = m * (fmt.val.r : ℝ) ^ e 
@@ -176,11 +198,13 @@ theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℤ) :
   case left =>
     rw [greatest_e]
     norm_cast
+    simp only [he]
+    have H : e ∈ {z : ℤ | (fmt.val.r : ℝ) ^ z ≤ abs x} := by
+      rw [he]
+      simp [float_real_le_1_le]
+      norm_cast
     sorry
   case right =>
+    rw [greatest_m]
     sorry
-
-
-
-
 
