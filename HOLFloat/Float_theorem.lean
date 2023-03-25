@@ -190,7 +190,7 @@ theorem float_pow_int_eq_le (r : ℤ)(x : ℝ)(m : ℤ)(e : ℤ) : x ≠ 0 →1 
 
  
 @[simp]
-theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℤ) :
+theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℝ) :
   x ≠ 0 → 1 ≤ m → m < fmt.val.r → |x| = m * (fmt.val.r : ℝ) ^ e 
   → greatest_e fmt x  = e ∧ greatest_m fmt x = m  := by
   intros hx hm hr he
