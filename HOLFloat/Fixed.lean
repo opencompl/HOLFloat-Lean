@@ -58,20 +58,12 @@ noncomputable def fround (fmt: fformat)(mode : roundmode)(x: ℝ): ℝ :=
   let hi := lub fmt x
   match mode with
   | roundmode.to_near => 
-    if (closer lo hi x) then
-      lo
-    else if (closer hi lo x) then
-      hi
-    else if (ff (fmt) lo % 2 = 0) then
-      hi
-    else
-      hi
+    if (closer lo hi x)           then lo
+    else if (closer hi lo x)      then hi
+    else if (ff (fmt) lo % 2 = 0) then lo
+    else                               hi
   | roundmode.to_zero =>
-    if (0 ≤ x) then
-      glb fmt x
-    else
-      lub fmt x
-  | roundmode.to_pinf =>
-    lub fmt x
-  | roundmode.to_ninf =>
-    glb fmt x
+    if (0 ≤ x) then      lo
+    else                 hi
+  | roundmode.to_pinf => hi
+  | roundmode.to_ninf => lo
