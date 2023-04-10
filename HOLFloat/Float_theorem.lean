@@ -8,6 +8,14 @@ set_option trace.aesop.steps true
 --set_option trace.aesop.ruleSet true
 --set_option aesop.maxRuleApplications 400
 @[simp]
+theorem float_real_le_1_le (x : ℝ)(m :ℤ) : 0 < x → 1 ≤ m → x ≤ m * x := by
+  intro h₁ h₂
+  norm_cast
+  rw [le_mul_iff_one_le_left]
+  norm_cast
+  exact h₁
+
+@[simp]
 theorem flformat_radix_lt_0 (fmt:flformat) : 0 < fmt.val.r := by
   linarith [fmt.prop.left]
 
@@ -48,8 +56,7 @@ theorem float_radix_ipow_lt_0 (fmt: flformat)(e : ℤ) : 0 < (fmt.val.r: ℝ) ^ 
 @[simp]
 theorem float_ipow_le_real (fmt :flformat)(x : ℝ) : ∃(e : ℤ), x ≤ ((fmt.val.r : ℝ ) ^ e) := by
   apply ipow_le_real --FIXME: wait for port
-  case a =>
-    simp [flformat_radix_le_2]
+  simp [flformat_radix_le_2]
 
 
 @[simp]
@@ -123,7 +130,18 @@ theorem float_greatest_e_exists (fmt:flformat) (x : ℝ)(e : ℤ) : x ≠ 0 → 
     }
     case h2 => {
       --NOTE: exists 42 -- fake bound, need log.
-      sorry
+      simp [BddAbove]
+      simp [Set.Nonempty]
+      simp [upperBounds]
+      existsi e
+      intro a ha
+      have hpa : a ∈ {z : ℤ | (fmt_val.r : ℝ) ^ z ≤ |x| } → a ≤ e := by
+        simp
+        norm_cast at *
+        intro A_IN_SET
+        sorry
+      aesop_subst he
+      simp_all only [ne_eq, Int.one_lt_zero_le_iff, Int.cast_eq_zero, Set.mem_setOf_eq, forall_true_left]
     }
   case right =>
     intro e1 hp
@@ -135,7 +153,6 @@ theorem float_greatest_e_exists (fmt:flformat) (x : ℝ)(e : ℤ) : x ≠ 0 → 
       simp_all only [ne_eq, Int.cast_eq_zero, Set.mem_setOf_eq]
     case h₁ =>
       sorry
-
 #check le_supₛ 
 #check CompleteSemilatticeSup ℤ 
 #check le_csupₛ 
@@ -166,13 +183,6 @@ theorem float_normalize_real (fmt : flformat) (x : ℝ) : x < 0 → x = greatest
   intro h
   sorry
 
-@[simp]
-theorem float_real_le_1_le (x : ℝ)(m :ℤ) : 0 < x → 1 ≤ m → x ≤ m * x := by
-  intro h₁ h₂
-  norm_cast
-  rw [le_mul_iff_one_le_left]
-  norm_cast
-  exact h₁
   
 
 @[simp]
@@ -187,8 +197,6 @@ theorem float_pow_int_eq_le (r : ℤ)(x : ℝ)(m : ℤ)(e : ℤ) : x ≠ 0 →1 
     simp; exact hx
   case a =>
     exact hm
-
- 
 @[simp]
 theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℝ) :
   x ≠ 0 → 1 ≤ m → m < fmt.val.r → |x| = m * (fmt.val.r : ℝ) ^ e 
@@ -199,11 +207,21 @@ theorem float_eq_ipow (fmt : flformat) (x : ℝ)(e : ℤ)(m : ℝ) :
     rw [greatest_e]
     norm_cast
     simp only [he]
+
     have H : e ∈ {z : ℤ | (fmt.val.r : ℝ) ^ z ≤ abs x} := by
       rw [he]
       simp [float_real_le_1_le]
       norm_cast
-    sorry
+    have H₁: ∀k, k ∈ {z : ℤ | (fmt.val.r : ℝ) ^ z ≤ abs x} → k ≥ e := by
+      intro k hk
+      rw [he] at hk
+      simp_all [float_real_le_1_le]
+      norm_cast
+      have R_REAL_GT_1: 1 <(fmt.val.r :ℝ) := by
+        simp_all only [lt_self_iff_false, ne_eq, Int.one_lt_zero_le_iff, Int.cast_lt_zero, Int.cast_eq_zero, Set.mem_setOf_eq,
+        gt_iff_lt, float_radix_ipow_lt_0, le_mul_iff_one_le_left, ge_iff_le, flformat_radix_lt_1_real]
+      apply ipow_monotone_le_pow  R_REAL_GT_1
+      sorry
   case right =>
     rw [greatest_m]
     sorry

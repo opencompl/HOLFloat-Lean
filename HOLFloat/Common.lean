@@ -29,6 +29,7 @@ theorem Int.one_lt_zero_lt (i : ℤ) : 1 < i → 0 < i := by
   intro h
   have hz : (0: ℤ) < 1 := by simp
   apply lt_trans hz h
+
 @[simp]
 theorem Int.one_lt_zero_le_iff (i : ℤ) (j : ℤ) : j < i ↔ j + 1 ≤ i := by
   apply Iff.intro
@@ -36,6 +37,7 @@ theorem Int.one_lt_zero_le_iff (i : ℤ) (j : ℤ) : j < i ↔ j + 1 ≤ i := by
     exact a
   · intro a
     exact a
+
 @[simp]
 theorem Int.one_lt_ne_one {a : ℤ}(h : 1 < a):a ≠ 1 := by
   intro a_1
@@ -111,10 +113,6 @@ theorem ipow_lt_one {r : ℝ}{i : ℤ} : 1 < r → 0 < i → 1 < r ^ i := by
 theorem ipow_le_sum {r : ℝ}{n : ℝ} : 2 ≤ r → 0 ≤ i → ∃(e : ℤ), n ≤ r ^ e := by
   sorry
 
-@[simp]
-theorem ipow_le_real {r : ℝ}{z : ℝ} : 2 ≤ r → ∃ (e : ℤ) , z ≤ r ^ e := by
-  --TODO: finding the bound using log is impossible because log isn't defined yet in mathlib4 for real numbers
-  sorry
 
 @[simp]
 theorem ipow_le_real_two {r : ℝ}{z : ℝ} : 0 < z → 2 ≤ r → ∃ e : ℤ , r ^ e ≤ z := by
@@ -123,19 +121,39 @@ theorem ipow_le_real_two {r : ℝ}{z : ℝ} : 0 < z → 2 ≤ r → ∃ e : ℤ 
 @[simp]
 theorem ipow_monotone {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r → u ≤ v → r ^ u ≤ r ^ v := by
   sorry
-
+@[simp]
+theorem ipow_monotone_pow {r : ℝ}{u : ℤ}{v : ℤ} : 1 ≤ r →  r ^ u ≤ r ^ v → u ≤ v := by
+  sorry
 
 @[simp]
 theorem ipow_monotone_lt {r :ℝ}{u : ℤ}{v :ℤ} : 1 < r → u < v →  r ^ u < r ^ v := by
-  mono
   intro a a_1
   simp_all only [ne_eq, gt_iff_lt, zpow_lt_iff_lt]
+
+@[simp]
+theorem ipow_monotone_lt_pow {r :ℝ}{u : ℤ}{v :ℤ} : 1 < r →   r ^ u < r ^ v → u < v := by
+  intro a a_1
+  simp_all only [ne_eq, gt_iff_lt, zpow_lt_iff_lt, one_lt_zero_le_iff]
+@[simp]
+theorem ipow_monotone_le_pow {r :ℝ}{u : ℤ}{v :ℤ} : 1 < r →   r ^ u ≤ r ^ v → u ≤ v := by
+  intro a a_1
+  simp_all only [ne_eq, gt_iff_lt, zpow_le_iff_le]
+
+@[simp]
+theorem ipow_monotone_le {r :ℝ}{u : ℤ}{v :ℤ} : 1 < r →  u ≤ v →  r ^ u ≤ r ^ v  := by
+  intro a a_1
+  simp_all only [ne_eq, gt_iff_lt, zpow_le_iff_le]
 @[simp]
 theorem ipow_monotone_two {r : ℝ}{u : ℤ}{v : ℤ} : 2 ≤ r → u ≤ v → r ^ u ≤ r ^ v  := by
   sorry
 
 @[simp]
 theorem ipow_mul_inv_eq_one {r : ℝ}{i : ℤ} : 0 < r → r ^ i * r ^ (-i) = 1 := by
+  sorry
+@[simp]
+theorem ipow_le_real {r : ℝ}{z : ℝ} : 2 ≤ r → ∃ (e : ℤ) , z ≤ r ^ e := by
+  intros h
+  --TODO: finding the bound using log is impossible because log isn't defined yet in mathlib4 for real numbers
   sorry
 
 noncomputable def rerror (a : ℝ)(b : ℝ): ℝ :=
